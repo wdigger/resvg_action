@@ -2,51 +2,51 @@ name: Build
 on:
   workflow_dispatch:
 jobs:
-  # build_ios:
-  #   permissions:
-  #     contents: write
-  #   runs-on: macos-latest
-  #   steps:
-  #     - name: Checkout the repository
-  #       uses: actions/checkout@v4
-  #       with:
-  #         repository: 'RazrFalcon/resvg'
-  #         fetch-depth: 0
+  build_ios:
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'RazrFalcon/resvg'
+          fetch-depth: 0
 
-  #     - name: Get the latest tag
-  #       run: |
-  #         latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-  #         echo "Latest tag: $latest_tag"
-  #         echo "latest_tag=$latest_tag" >> $GITHUB_ENV
-  #     - name: Checkout latest tag
-  #       run: git checkout ${{ env.latest_tag }}
+      - name: Get the latest tag
+        run: |
+          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "Latest tag: $latest_tag"
+          echo "latest_tag=$latest_tag" >> $GITHUB_ENV
+      - name: Checkout latest tag
+        run: git checkout ${{ env.latest_tag }}
 
-  #     - name: Build c-api
-  #       run: |
-  #         cd crates/c-api
-  #         rustup target add aarch64-apple-ios aarch64-apple-ios-sim aarch64-apple-darwin
-  #         cargo build --target aarch64-apple-ios --release --no-default-features
-  #         cargo build --target aarch64-apple-ios-sim --release --no-default-features
-  #         cargo build --target aarch64-apple-darwin --release --no-default-features
+      - name: Build c-api
+        run: |
+          cd crates/c-api
+          rustup target add aarch64-apple-ios aarch64-apple-ios-sim aarch64-apple-darwin
+          cargo build --target aarch64-apple-ios --release --no-default-features
+          cargo build --target aarch64-apple-ios-sim --release --no-default-features
+          cargo build --target aarch64-apple-darwin --release --no-default-features
 
-  #     - name: Create xcframework
-  #       run: |
-  #         mkdir include
-  #         cp crates/c-api/resvg.h include
-  #         xcodebuild -create-xcframework \
-  #         -library target/aarch64-apple-ios/release/libresvg.a -headers include \
-  #         -library target/aarch64-apple-ios-sim/release/libresvg.a -headers include \
-  #         -library target/aarch64-apple-darwin/release/libresvg.a -headers include \
-  #         -output resvg.xcframework
+      - name: Create xcframework
+        run: |
+          mkdir include
+          cp crates/c-api/resvg.h include
+          xcodebuild -create-xcframework \
+          -library target/aarch64-apple-ios/release/libresvg.a -headers include \
+          -library target/aarch64-apple-ios-sim/release/libresvg.a -headers include \
+          -library target/aarch64-apple-darwin/release/libresvg.a -headers include \
+          -output resvg.xcframework
 
-  #     - name: Zip
-  #       run: zip -r resvg.xcframework.zip resvg.xcframework
-      
-  #     - name: Release
-  #       uses: softprops/action-gh-release@v2
-  #       with:
-  #         tag_name: ${{ env.latest_tag }}
-  #         files: resvg.xcframework.zip
+      - name: Zip
+        run: zip -r resvg.xcframework.zip resvg.xcframework
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.latest_tag }}
+          files: resvg.xcframework.zip
 
   build_android:
     permissions:
@@ -93,4 +93,3 @@ jobs:
         with:
           name: jniLibs
           path: jniLibs
-
