@@ -10,7 +10,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
         with:
-          repository: 'RazrFalcon/resvg'
+          repository: "RazrFalcon/resvg"
           fetch-depth: 0
 
       - name: Get the latest tag
@@ -28,6 +28,13 @@ jobs:
           cargo build --target aarch64-apple-ios --release --no-default-features
           cargo build --target aarch64-apple-ios-sim --release --no-default-features
           cargo build --target aarch64-apple-darwin --release --no-default-features
+          rustup component add rust-src --toolchain nightly
+          cargo +nightly build -Z build-std --target aarch64-apple-tvos
+          cargo +nightly build -Z build-std --target aarch64-apple-tvos-sim
+          cargo +nightly build -Z build-std --target arm64e-apple-tvos
+          cargo +nightly build --target aarch64-apple-tvos --release --no-default-features
+          cargo +nightly build --target aarch64-apple-tvos-sim --release --no-default-features
+          cargo +nightly build --target arm64e-apple-tvos --release --no-default-features
 
       - name: Create xcframework
         run: |
@@ -37,6 +44,9 @@ jobs:
           -library target/aarch64-apple-ios/release/libresvg.a -headers include \
           -library target/aarch64-apple-ios-sim/release/libresvg.a -headers include \
           -library target/aarch64-apple-darwin/release/libresvg.a -headers include \
+          -library target/aarch64-apple-tvos/release/libresvg.a -headers include \
+          -library target/aarch64-apple-tvos-sim/release/libresvg.a -headers include \
+          -library target/arm64e-apple-tvos/release/libresvg.a -headers include \
           -output resvg.xcframework
 
       - name: Zip
@@ -56,7 +66,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
         with:
-          repository: 'RazrFalcon/resvg'
+          repository: "RazrFalcon/resvg"
           fetch-depth: 0
 
       - name: Get the latest tag
